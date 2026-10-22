@@ -25,7 +25,7 @@ ArchitecturesInstallIn64BitMode=x64compatible
 MinVersion=10.0
 OutputDir={#Raiz}\Instaladores\00 OmniSuite Studio\Instalador
 OutputBaseFilename=OmniSuite Studio Instalador Completo 1.0
-Compression=lzma2/fast
+Compression=lzma2/ultra64
 SolidCompression=yes
 LZMAUseSeparateProcess=yes
 LZMANumBlockThreads=8
@@ -67,7 +67,7 @@ Source: "{#Raiz}\Instaladores\02 FPS Booster\Portable\OmniFlow FPS Booster Porta
 Source: "{#Raiz}\Instaladores\03 Upscaler\Portable\OmniScale Studio Portable\*"; DestDir: "{app}\OmniScale Studio"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniscale
 
 ; 5. Transcriptor Local
-Source: "{#Raiz}\Instaladores\04 Transcriptor\Portable\Transcriptor Portable\*"; DestDir: "{app}\Transcriptor"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: transcriptor
+Source: "{#Raiz}\Instaladores\04_Transcriptor\Portable\Transcriptor_Portable\*"; DestDir: "{app}\Transcriptor"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: transcriptor
 
 [Icons]
 ; Menú Inicio
