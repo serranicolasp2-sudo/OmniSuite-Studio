@@ -8,7 +8,7 @@
 
 ## 🎨 Identidad Visual y Diseño de Marca: "Tu Tiendita IA"
 
-**OmniSuite Studio** unifica todas las herramientas de la suite bajo la dirección de arte y el diseño editorial oficial de **Tu Tiendita IA** ([tutiendita-ia.store](https://tutiendita-ia.store)), la plataforma y tienda online referente en recursos, cursos y software de vanguardia en Inteligencia Artificial y producción digital.
+**OmniSuite Studio** unifica todas las herramientas de la suite bajo la dirección de arte y el diseño editorial de **Tu Tiendita IA** ([tutiendita-ia.store](https://tutiendita-ia.store)), suite creativa en Inteligencia Artificial y producción digital.
 
 El sistema visual **"Noche Tinta Studio"** fue diseñado para profesionales audiovisuales que pasan horas frente al monitor:
 - **Azul Birome (`#1E3C96` / `#2A4FC0`)**: Acciones principales, renderizado e interlocutor 1.
@@ -72,10 +72,35 @@ OmniSuite Studio es una estación de trabajo audiovisual completa que resuelve l
 | Herramienta | Función Principal | Aceleración por Hardware | Formatos Destacados |
 |---|---|---|---|
 | **OmniBoost Studio** | Video Booster Ultra, CAS, Denoise, Anti-Banding | NVIDIA RTX NVENC p7, AMD AMF, CPU | 16:9, 9:16 Vertical, 1:1, 4K Cinema DCI |
-| **OmniFlow FPS Booster** | Interpolación de Cuadros HFR (60 / 120 FPS) | Flujo Óptico Bidireccional + NVENC | 60 FPS, 120 FPS Slow-Mo, 48 FPS Cine |
+| **OmniFlow FPS Booster** | Interpolación de Cuadros HFR (60 / 120 FPS) | Mezcla Adaptativa + NVENC / AMF / CPU | 60 FPS, 120 FPS Slow-Mo, 48 FPS Cine |
 | **OmniScale Studio** | Upscaler Universal Lanczos + FidelityFX | NVIDIA NVENC / HEVC H.265, AMF | Auto 1080p, Auto 4K UHD, 1080x1920 (9:16) |
-| **Transcriptor Local** | Diarización 4 Hablantes + Whisper large-v3-turbo | GPU NVIDIA CUDA (FP16) o CPU multihilo | .SRT Subtítulos, .DOCX Word, .TXT, .JSON |
-| **OmniSuite Hub** | Centro de Control y Lanzador Rápido | Nativo Windows (.exe) | Gestión centralizada de toda la suite |
+| **Transcriptor Local** | Diarización 4 Hablantes + Whisper large-v3-turbo | CPU INT8 (Universal) + Add-ons GPU opcionales | .SRT Subtítulos, .DOCX Word, .TXT, .JSON |
+| **OmniSuite Hub** | Centro de Control y Lanzador Rápido | Nativo Windows (.exe) / Python | Gestión centralizada de toda la suite |
+
+---
+
+## 🛠️ Arquitectura y Guía de Compilación (Build de la Suite)
+
+El código fuente de OmniSuite Studio orquesta los submódulos de la suite y permite compilarlos de forma automatizada:
+
+### Estructura de Proyectos Hermana Esperada:
+```text
+APPS/
+├── OmniSuite Studio/          <-- Este repositorio (Hub y empaquetador)
+├── Video Booster/             <-- OmniBoost Studio
+├── FPS Booster 60fps/         <-- OmniFlow FPS Booster
+├── Upscaler 1080p/            <-- OmniScale Studio
+└── Transcriptor/              <-- Transcriptor Local (Whisper + Pyannote)
+```
+
+### Proceso de Compilación:
+1. **Compilación Individual**: Cada aplicación se compila con PyInstaller (`.spec`) o mediante sus scripts de build en su respectiva carpeta.
+2. **Ensamblado de Instalador All-in-One**:
+   - `build_omnisuite.py` compila el Hub `OmniSuite Studio.exe`.
+   - `compilar_instalador_suite.py` invoca Inno Setup (`ISCC.exe`) sobre `OmniSuite_Installer.iss` para empaquetar todos los binarios y recursos.
+   - El instalador resultante se genera en `Instaladores/salida/` y los binarios compilados se publican como **GitHub Releases** (assets descargables) en sus repositorios correspondientes.
+3. **Distribución en tutiendita-ia.store**:
+   - La tienda web enlaza directamente a los releases de GitHub para la descarga del usuario final.
 
 ---
 

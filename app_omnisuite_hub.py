@@ -405,37 +405,45 @@ class OmniSuiteApp:
                 "OmniBoost Studio",
                 "Video Booster Ultra & Restauración",
                 "🎬 Cine, animación 3D, CGI y tomas de IA.",
-                "Lanzar OmniBoost.bat",
                 "Video Booster",
+                "OmniBoost Studio.exe",
+                ["Lanzar OmniBoost.bat", "Lanzar Video Booster.bat"],
+                "app_video_booster.py",
                 "omniboost"
             ),
             (
                 "OmniFlow FPS Booster",
                 "Interpolador de Cuadros 60 / 120 FPS",
                 "⚡ Máxima fluidez sin judder ni distorsión.",
-                "Lanzar OmniFlow.bat",
                 "FPS Booster 60fps",
+                "OmniFlow FPS Booster.exe",
+                ["Lanzar OmniFlow.bat", "Lanzar FPS Booster.bat", "Lanzar FPS Booster 60fps.bat"],
+                "app_fps_booster.py",
                 "omniflow"
             ),
             (
                 "OmniScale Studio",
                 "Upscaler Universal 1080p / 2K / 4K",
                 "📱 Adaptativo 9:16 vertical para Reels, TikTok y 16:9.",
-                "Lanzar OmniScale.bat",
                 "Upscaler 1080p",
+                "OmniScale Studio.exe",
+                ["Lanzar OmniScale.bat", "Lanzar Upscaler 1080p.bat"],
+                "app_upscaler.py",
                 "omniscale"
             ),
             (
                 "Transcriptor Local",
                 "Diarización de 4 Hablantes & Whisper",
                 "🎙️ Subtítulos .SRT, informes .DOCX y editor de audio.",
-                "Lanzar Transcriptor.bat",
                 "Transcriptor",
+                "Transcriptor.exe",
+                ["Lanzar Transcriptor.bat", "transcribir.bat"],
+                "main.py",
                 "transcriptor"
             ),
         ]
 
-        for title, sub, target_desc, bat_name, folder_name, ico_key in hub_list:
+        for title, sub, target_desc, folder_name, exe_name, bat_names, py_name, ico_key in hub_list:
             c = RoundedCard(page, bg_color=BG_CARD, border_color=BG_CARD_BORDER)
             c.pack(fill="x", pady=5)
             b = c.body
@@ -456,8 +464,9 @@ class OmniSuiteApp:
             btn_box = tk.Frame(b, bg=BG_CARD)
             btn_box.pack(side="right")
 
-            bat_path = APPS_DIR / bat_name
             app_folder = APPS_DIR / folder_name
+            if not app_folder.exists():
+                app_folder = CURRENT_DIR.parent / folder_name
 
             tk.Button(
                 btn_box, text="📂 Carpeta", font=("Segoe UI", 9), bg=CHIP_BG, fg=TEXT_MAIN,
@@ -474,7 +483,7 @@ class OmniSuiteApp:
             tk.Button(
                 btn_box, text="▶ Iniciar", font=("Segoe UI Semibold", 10), bg=COLOR_BIROME, fg=COLOR_PAPEL,
                 activebackground=COLOR_BIROME_HOVER, relief="flat", bd=0, padx=16, pady=5, cursor="hand2",
-                command=lambda p=bat_path: self._launch_app(p)
+                command=lambda t=title, fn=folder_name, en=exe_name, bn=bat_names, pn=py_name: self._launch_app(t, fn, en, bn, pn)
             ).pack(side="left", padx=(4, 0))
 
     # =========================================================================
@@ -590,12 +599,76 @@ Esta suite fue concebida para potenciar los cuatro pilares fundamentales del con
         if d:
             self.dest_path_var.set(d)
 
-    def _launch_app(self, bat_path: Path):
-        if bat_path.exists():
-            subprocess.Popen([str(bat_path)], shell=True, cwd=str(bat_path.parent))
-            self._log(f"Iniciando {bat_path.stem}...")
-        else:
-            messagebox.showerror("Error", f"No se encontró el lanzador:\n{bat_path}")
+    def _launch_app(self, title: str, folder_name: str, exe_name: str, bat_names: list, py_name: str):
+        """
+        Lanza la aplicación seleccionada con fallback en cascada:
+        1. Ejecutable compilado (.exe) en modo instalado o portable.
+        2. Lanzador por lotes (.bat) en modo desarrollo local.
+        3. Script directo (.py) ejecutado con el intérprete Python correspondiente.
+        """
+        # Directorios candidatos donde puede residir la aplicación
+        candidate_dirs = [
+            CURRENT_DIR / folder_name,
+            CURRENT_DIR.parent / folder_name,
+            APPS_DIR / folder_name,
+        ]
+        if getattr(sys, "frozen", False):
+            candidate_dirs.insert(0, Path(sys.executable).parent / folder_name)
+            candidate_dirs.insert(1, Path(sys.executable).parent)
+
+        target_dir = None
+        for d in candidate_dirs:
+            if d.exists() and d.is_dir():
+                target_dir = d
+                break
+
+        if not target_dir:
+            target_dir = CURRENT_DIR.parent / folder_name
+
+        # 1. Buscar ejecutable compilado (.exe)
+        exe_candidates = [
+            target_dir / exe_name,
+            target_dir / "dist" / exe_name,
+            target_dir / folder_name / exe_name,
+        ]
+        for ec in exe_candidates:
+            if ec.exists():
+                try:
+                    subprocess.Popen([str(ec)], cwd=str(ec.parent))
+                    self._log(f"Iniciando ejecutable: {ec.name}...")
+                    return
+                except Exception as e:
+                    self._log(f"Aviso al iniciar {ec.name}: {e}")
+
+        # 2. Buscar lanzador .bat
+        for bn in bat_names:
+            bp = target_dir / bn
+            if bp.exists():
+                try:
+                    subprocess.Popen([str(bp)], shell=True, cwd=str(target_dir))
+                    self._log(f"Iniciando lanzador por lotes: {bn}...")
+                    return
+                except Exception as e:
+                    self._log(f"Aviso al iniciar {bn}: {e}")
+
+        # 3. Buscar script .py directo
+        py_path = target_dir / py_name
+        if py_path.exists():
+            # Buscar si el subproyecto tiene su propio entorno virtual
+            venv_python = target_dir / "entorno" / "Scripts" / "python.exe"
+            python_exec = str(venv_python) if venv_python.exists() else sys.executable
+            try:
+                subprocess.Popen([python_exec, str(py_path)], cwd=str(target_dir))
+                self._log(f"Iniciando script Python: {py_name} con {Path(python_exec).name}...")
+                return
+            except Exception as e:
+                self._log(f"Error al iniciar {py_name}: {e}")
+
+        messagebox.showerror(
+            "Lanzador No Encontrado",
+            f"No se pudo localizar el ejecutable (.exe), script (.bat) ni fuente ({py_name}) para {title}.\n\n"
+            f"Carpeta inspeccionada:\n{target_dir}"
+        )
 
     def _log(self, msg: str):
         self.msg_queue.put(("log", msg))
