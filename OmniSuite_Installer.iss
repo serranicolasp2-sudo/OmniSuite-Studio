@@ -28,7 +28,8 @@ OutputBaseFilename=OmniSuite Studio Instalador Completo 1.0
 Compression=lzma2/ultra64
 SolidCompression=yes
 LZMAUseSeparateProcess=yes
-LZMANumBlockThreads=8
+LZMANumBlockThreads=1
+LZMADictionarySize=131072
 DiskSpanning=no
 WizardStyle=modern
 SetupIconFile={#Raiz}\iconos\omnisuite.ico
@@ -60,11 +61,13 @@ Source: "{#Raiz}\OmniSuite Studio\INSTRUCTIVO.md"; DestDir: "{app}"; Flags: igno
 ; 2. OmniBoost Studio
 Source: "{#Raiz}\Instaladores\01 Video Booster\Portable\OmniBoost Studio Portable\*"; DestDir: "{app}\OmniBoost Studio"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniboost
 
-; 3. OmniFlow FPS Booster
-Source: "{#Raiz}\Instaladores\02 FPS Booster\Portable\OmniFlow FPS Booster Portable\*"; DestDir: "{app}\OmniFlow FPS Booster"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniflow
+; 3. OmniFlow FPS Booster (reutiliza los binarios de FFmpeg para deduplicación óptima)
+Source: "{#Raiz}\Instaladores\02 FPS Booster\Portable\OmniFlow FPS Booster Portable\*"; DestDir: "{app}\OmniFlow FPS Booster"; Excludes: "\bin\*"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniflow
+Source: "{#Raiz}\Instaladores\01 Video Booster\Portable\OmniBoost Studio Portable\bin\*"; DestDir: "{app}\OmniFlow FPS Booster\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniflow
 
-; 4. OmniScale Studio
-Source: "{#Raiz}\Instaladores\03 Upscaler\Portable\OmniScale Studio Portable\*"; DestDir: "{app}\OmniScale Studio"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniscale
+; 4. OmniScale Studio (reutiliza los binarios de FFmpeg para deduplicación óptima)
+Source: "{#Raiz}\Instaladores\03 Upscaler\Portable\OmniScale Studio Portable\*"; DestDir: "{app}\OmniScale Studio"; Excludes: "\bin\*"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniscale
+Source: "{#Raiz}\Instaladores\01 Video Booster\Portable\OmniBoost Studio Portable\bin\*"; DestDir: "{app}\OmniScale Studio\bin"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: omniscale
 
 ; 5. Transcriptor Local
 Source: "{#Raiz}\Instaladores\04_Transcriptor\Portable\Transcriptor_Portable\*"; DestDir: "{app}\Transcriptor"; Flags: ignoreversion recursesubdirs createallsubdirs; Components: transcriptor
