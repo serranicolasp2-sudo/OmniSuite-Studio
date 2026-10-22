@@ -1,0 +1,20 @@
+# PyInstaller
+dist/
+build/
+*.spec
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Shortcuts
+*.lnk
+
+# Archivos grandes de instaladores compilados
+salida/
