@@ -425,7 +425,9 @@ class PillButton(tk.Canvas):
 class RoundedCard(tk.Canvas):
     """Tarjeta con esquinas redondeadas y superficie elevada 'Tu tiendita IA'."""
     def __init__(self, parent, bg_app=BG_APP, card_bg=BG_CARD, border_color=BG_CARD_BORDER,
-                 radius=14, pad=16, auto_height=True, **kwargs):
+                 radius=14, pad=16, auto_height=True, bg_color=None, **kwargs):
+        if bg_color is not None:
+            card_bg = bg_color
         super().__init__(parent, bg=bg_app, highlightthickness=0, **kwargs)
         self.bg_app = bg_app
         self.card_bg = card_bg
@@ -475,15 +477,17 @@ class RoundedCard(tk.Canvas):
 
 class SegmentedSwitch(tk.Frame):
     """Selector de pestañas segmentado tipo pill control moderno."""
-    def __init__(self, parent, options, on_change=None, **kwargs):
+    def __init__(self, parent, options=None, on_change=None, segments=None, command=None, initial_idx=0, **kwargs):
+        opts = options if options is not None else (segments if segments is not None else [])
+        cb = on_change if on_change is not None else command
         super().__init__(parent, bg=BG_INPUT, padx=3, pady=3,
                          highlightbackground=BG_CARD_BORDER, highlightthickness=1, **kwargs)
-        self.options = options
-        self.on_change = on_change
-        self.selected_idx = 0
+        self.options = opts
+        self.on_change = cb
+        self.selected_idx = initial_idx
         self.buttons = []
 
-        for idx, opt in enumerate(options):
+        for idx, opt in enumerate(opts):
             lbl = tk.Label(self, text=opt, font=FONT_BTN, cursor='hand2', padx=16, pady=6)
             lbl.bind('<Button-1>', lambda e, i=idx: self.select(i))
             lbl.bind('<Enter>', lambda e, i=idx: self._hover(i, True))

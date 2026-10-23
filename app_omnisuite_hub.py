@@ -86,8 +86,8 @@ class OmniSuiteApp:
         self.root.after(100, self._process_queue)
 
     def _build_header(self):
-        hdr = tk.Frame(self.root, bg=BG_APP, padx=22, pady=(14, 6))
-        hdr.pack(fill="x")
+        hdr = tk.Frame(self.root, bg=BG_APP)
+        hdr.pack(fill="x", padx=22, pady=(14, 6))
 
         # Icono a la izquierda
         ico_img = load_icon_image("omnisuite", 56)
@@ -149,14 +149,13 @@ class OmniSuiteApp:
         tk.Frame(sep_f, bg=BG_CARD_BORDER, height=1).pack(side="left", fill="x", expand=True)
 
     def _build_tabs(self):
-        tab_box = tk.Frame(self.root, bg=BG_APP, padx=22, pady=(0, 6))
-        tab_box.pack(fill="x")
+        tab_box = tk.Frame(self.root, bg=BG_APP)
+        tab_box.pack(fill="x", padx=22, pady=(0, 6))
 
         self.tab_switch = SegmentedSwitch(
             tab_box,
-            segments=["📦 Instalador Multiapp", "🎛️ Centro de Control (Hub)", "💡 Guía para Creadores"],
-            initial_idx=0,
-            command=self._on_tab_change
+            options=["📦 Instalador Multiapp", "🎛️ Centro de Control (Hub)", "💡 Guía para Creadores"],
+            on_change=self._on_tab_change
         )
         self.tab_switch.pack(anchor="w")
 
@@ -263,7 +262,7 @@ class OmniSuiteApp:
         )
 
         # 3. Opciones de Instalación (Destino, Tipo y Accesos directos)
-        opt_card = RoundedCard(page, bg_color=BG_CARD, border_color=BG_CARD_BORDER)
+        opt_card = RoundedCard(page, card_bg=BG_CARD, border_color=BG_CARD_BORDER)
         opt_card.pack(fill="x", pady=6)
         opt_f = opt_card.body
 
@@ -347,7 +346,7 @@ class OmniSuiteApp:
         self._log("OmniSuite Studio inicializado. Seleccioná las herramientas que deseás instalar y presioná 'Iniciar'.")
 
     def _build_app_card(self, parent, row, title, badge, badge_color, desc, size_str, var, icon_key, badge_fg=COLOR_PAPEL):
-        card = RoundedCard(parent, bg_color=BG_CARD, border_color=BG_CARD_BORDER)
+        card = RoundedCard(parent, card_bg=BG_CARD, border_color=BG_CARD_BORDER)
         card.grid(row=row, column=0, sticky="nsew", pady=3)
         b = card.body
 
@@ -444,7 +443,7 @@ class OmniSuiteApp:
         ]
 
         for title, sub, target_desc, folder_name, exe_name, bat_names, py_name, ico_key in hub_list:
-            c = RoundedCard(page, bg_color=BG_CARD, border_color=BG_CARD_BORDER)
+            c = RoundedCard(page, card_bg=BG_CARD, border_color=BG_CARD_BORDER)
             c.pack(fill="x", pady=5)
             b = c.body
 
@@ -543,8 +542,8 @@ Esta suite fue concebida para potenciar los cuatro pilares fundamentales del con
         txt.configure(state="disabled")
 
     def _build_footer(self):
-        ftr = tk.Frame(self.root, bg=BG_APP, padx=22, pady=(6, 12))
-        ftr.pack(fill="x")
+        ftr = tk.Frame(self.root, bg=BG_APP)
+        ftr.pack(fill="x", padx=22, pady=(6, 12))
 
         tk.Label(
             ftr,
